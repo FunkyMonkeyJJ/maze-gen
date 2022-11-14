@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <string>
 #include "maze.hpp"
 
 Maze::Maze(std::string name, int width, int length) {
@@ -35,6 +34,16 @@ Maze* Maze::generate() {
 		std::cerr << "Tried adding " << this->num_rooms << " rooms but only " << area << " is available." << std::endl;
 		return this;
 	}
+
+	// TODO: Create Enum for all combinations of room openings
+	// N, NE, NS, NW, NES, NEW, NSW, NESW
+	// E, EW
+	// S, SE, SW, SEW
+	// W
+
+	// TODO: Based on Enum above, store different letters in grid
+	// TODO: Print different 3x3 based on Enum above (center spot is trap)
+		// This will remove the need for num_rooms
 
 	// set random rooms
 	while (this->num_rooms > 0) {
@@ -94,32 +103,46 @@ Maze* Maze::generate() {
 	return this;
 }
 
-void Maze::print() {
-	std::cout << "⌈"; // North Wall
-	for (int i = 0; i < width; i++)	std::cout << "—";
-	std::cout << "⌉" << std::endl;
+std::ostream& operator<<(std::ostream &stream, const Maze &maze) {
+	return stream << &maze;
+}
 
-	for (int i = 0; i < length; i++)
+std::ostream& operator<<(std::ostream &stream, const Maze *maze) {
+  	stream << "⌈"; // North Wall
+	for (int i = 0; i < maze->width; i++) stream << "—";
+	stream << "⌉" << std::endl;
+
+	for (int i = 0; i < maze->length; i++)
 	{
-		std::cout << '|'; // West Wall
-		for (int j = 0; j < width; j++)
+		stream << '|'; // West Wall
+		for (int j = 0; j < maze->width; j++)
 		{
 			// Prints space for empty space in the maze
 			// Otherwise prints the room, trap, etc. that exists there
-			std::cout << (grid[j][i] == '\0' ? ' ' : grid[j][i]);
+			stream << (maze->grid[j][i] == '\0' ? ' ' : maze->grid[j][i]);
 		}
-		std::cout << '|' << std::endl; // East Wall
+		stream << '|' << std::endl; // East Wall
 	}
 
-	std::cout << "⌊"; // South Wall
-	for (int i = 0; i < width; i++)	std::cout << "—";
-	std::cout << "⌋" << std::endl;
+	stream << "⌊"; // South Wall
+	for (int i = 0; i < maze->width; i++) stream << "—";
+	stream << "⌋" << std::endl;
+  	return stream;
 }
 
+void Maze::print() {
+	std::cout << this << std::endl;
+}
+
+// TODO
 Maze* Maze::import_from_file(std::string filename) {
 	return this;
 }
 
 void Maze::export_to_file(std::string filename) {
-	return;
+	std::ofstream ofile { filename };
+	if (ofile)
+	{
+		ofile << this << std::endl;
+	}
 }
