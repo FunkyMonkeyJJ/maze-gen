@@ -13,18 +13,14 @@ private:
 	int width;
 
 	std::vector<std::vector<char>> grid;
-	int num_rooms;
+	std::vector<std::vector<char>> trap_grid;
 	int num_traps;
 public:
 	Maze(std::string name, int length, int width);
 
-	Maze* set_num_rooms(int num_rooms);
-
 	Maze* set_num_traps(int num_traps);
 
 	Maze* generate();
-
-	//std::ostream& operator<<(std::ostream &stream);
 
 	friend std::ostream& operator<<(std::ostream &stream, const Maze &maze);
 
