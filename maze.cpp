@@ -91,21 +91,15 @@ std::ostream& operator<<(std::ostream &stream, const Maze &maze) {
 }
 
 std::ostream& operator<<(std::ostream &stream, const Maze *maze) {
-	// TODO: Print different 3x3 based on Enum above (center spot is trap)
-		// This will remove the need for num_rooms
+  	stream << "╔"; // North Wall
+	for (int i = 0; i < maze->width * 3; i++) stream << "═";
+	stream << "╗" << std::endl;
 
-  	stream << "⌈"; // North Wall
-	for (int i = 0; i < maze->width * 3; i++) stream << "—";
-	stream << "⌉" << std::endl;
-
-	for (int i = 0; i < maze->length; i++)
-	{
+	for (int i = 0; i < maze->length; i++) {
 		int row = 0;
-		for (int j = 0; j < maze->width; j++)
-		{
-			if (j == 0)
-			{
-				stream << '|'; // West Wall
+		for (int j = 0; j < maze->width; j++) {
+			if (j == 0) {
+				stream << "║"; // West Wall
 			}
 
 			char room = maze->grid[j][i];
@@ -158,23 +152,29 @@ std::ostream& operator<<(std::ostream &stream, const Maze *maze) {
 					break;
 			}
 
-			if (row == 0)
-			{
+			if (row == 0) {
 				// Print North wall of each room in the row
-				stream << "/";
-				if (openings.find('N') == std::string::npos)
-				{
-					stream << "—";
+				if (j == 0 && i == 0) {
+					stream << "╔";
+				} else {
+					stream << "╦";
+				}
+
+				if (openings.find('N') == std::string::npos) {
+					stream << "═";
 				} else {
 					stream << ' ';
 				}
-				stream << "\\";
+
+				if (j == maze->width - 1 && i == 0) {
+					stream << "╗";
+				} else {
+					stream << "╦";
+				}
 			} else if (row == 1) {
 				// Print West wall of each room in the row
-
-				if (openings.find('W') == std::string::npos)
-				{
-					stream << "|";
+				if (openings.find('W') == std::string::npos) {
+					stream << "║";
 				} else {
 					stream << ' ';
 				}
@@ -184,38 +184,45 @@ std::ostream& operator<<(std::ostream &stream, const Maze *maze) {
 				stream << (trap == '\0' ? ' ' : trap);
 
 				// Print East wall of each room in the row
-				if (openings.find('E') == std::string::npos)
-				{
-					stream << "|";
+				if (openings.find('E') == std::string::npos) {
+					stream << "║";
 				} else {
 					stream << ' ';
 				}
 			} else {
 				// Print South wall of each room in the row
-				stream << "\\";
-				if (openings.find('S') == std::string::npos)
-				{
-					stream << "—";
+				if (j == 0 && i == maze->length - 1) {
+					stream << "╚";
+				} else {
+					stream << "╩";
+				}
+
+				if (openings.find('S') == std::string::npos) {
+					stream << "═";
 				} else {
 					stream << ' ';
 				}
-				stream << "/";
-		}
 
-			if (j == maze->width - 1 && row < 2)
-			{
+				if (j == maze->width - 1 && i == maze->length - 1) {
+					stream << "╝";
+				} else {
+					stream << "╩";
+				}
+			}
+
+			if (j == maze->width - 1 && row < 2) {
 				row++;
 				j = -1;
-				stream << '|' << std::endl; // East Wall
+				stream << "║" << std::endl; // East Wall
 			}
 		}
 		
-		stream << '|' << std::endl; // East Wall
+		stream << "║" << std::endl; // East Wall
 	}
 
-	stream << "⌊"; // South Wall
-	for (int i = 0; i < maze->width * 3; i++) stream << "—";
-	stream << "⌋" << std::endl;
+	stream << "╚"; // South Wall
+	for (int i = 0; i < maze->width * 3; i++) stream << "═";
+	stream << "╝" << std::endl;
   	return stream;
 }
 
@@ -231,7 +238,5 @@ Maze* Maze::import_from_file(std::string filename) {
 void Maze::export_to_file(std::string filename) {
 	std::ofstream ofile { filename };
 	if (ofile)
-	{
 		ofile << this << std::endl;
-	}
 }
